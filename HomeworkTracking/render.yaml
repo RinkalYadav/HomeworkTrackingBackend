@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: HomeworkTrackingBackend
+    plan: free
+    region: oregon
+    envVars: []
+    dockerfilePath: ./Dockerfile

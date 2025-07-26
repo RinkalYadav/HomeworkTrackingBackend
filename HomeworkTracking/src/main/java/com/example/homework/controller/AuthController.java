@@ -61,6 +61,16 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
     
+    @GetMapping("/students")
+    public ResponseEntity<?> getAllStudents() {
+        List<User> students = userRepository.findAll()
+            .stream()
+            .filter(user -> "STUDENT".equalsIgnoreCase(user.getRole()))
+            .toList();
+
+        return ResponseEntity.ok(students);
+    }
+
     
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
