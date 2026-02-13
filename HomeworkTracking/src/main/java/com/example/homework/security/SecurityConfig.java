@@ -24,20 +24,20 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtFilter jwtF
     http
         .cors().and()
         .csrf().disable()
-        .authorizeHttpRequests(auth -> auth
-            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // ✅ ADD THIS LINE
-            .requestMatchers("/api/auth/**").permitAll()
-            .requestMatchers("/uploads/**").permitAll()
-            .requestMatchers("/api/teacher/assignments").permitAll()
+       .authorizeHttpRequests(auth -> auth
+    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+    .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
+    .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+    .requestMatchers("/api/auth/**").permitAll()
+    .requestMatchers("/uploads/**").permitAll()
 
-            .requestMatchers("/api/student/**").hasRole("STUDENT")
-.requestMatchers(HttpMethod.PUT, "/api/teacher/submissions/**").hasRole("TEACHER")
-.requestMatchers("/api/teacher/**").hasRole("TEACHER")
-.requestMatchers("/api/parent/**").hasRole("PARENT")
-.requestMatchers("/api/homework/**").hasRole("STUDENT")
+    .requestMatchers("/api/student/**").hasRole("STUDENT")
+    .requestMatchers("/api/teacher/**").hasRole("TEACHER")
+    .requestMatchers("/api/parent/**").hasRole("PARENT")
 
-            .anyRequest().authenticated()
-        )
+    .anyRequest().authenticated()
+)
+
         .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
