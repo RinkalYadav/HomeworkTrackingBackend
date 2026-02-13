@@ -19,28 +19,30 @@ import java.util.Collections;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
-        http
-            .cors()  // ✅ Enable CORS here!
-            .and()
-            .csrf().disable()
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/uploads/**").permitAll() 
-                .requestMatchers("/api/teacher/assignments").permitAll()
-                .requestMatchers("/api/student/**").hasAuthority("STUDENT")
-                .requestMatchers(HttpMethod.PUT, "/api/teacher/submissions/**").hasAuthority("TEACHER") // ✅ Add this line
-                .requestMatchers("/api/teacher/**").hasAuthority("TEACHER")            
-                .requestMatchers("/api/parent/**").hasAuthority("PARENT")
-                .requestMatchers("/api/homework/**").hasAuthority("STUDENT")
+  @Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
+    http
+        .cors().and()
+        .csrf().disable()
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // ✅ ADD THIS LINE
+            .requestMatchers("/api/auth/**").permitAll()
+            .requestMatchers("/uploads/**").permitAll()
+            .requestMatchers("/api/teacher/assignments").permitAll()
 
-                .anyRequest().authenticated()
-            )
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+            .requestMatchers("/api/student/**").hasAuthority("STUDENT")
+            .requestMatchers(HttpMethod.PUT, "/api/teacher/submissions/**").hasAuthority("TEACHER")
+            .requestMatchers("/api/teacher/**").hasAuthority("TEACHER")
+            .requestMatchers("/api/parent/**").hasAuthority("PARENT")
+            .requestMatchers("/api/homework/**").hasAuthority("STUDENT")
 
-        return http.build();
-    }
+            .anyRequest().authenticated()
+        )
+        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+    return http.build();
+}
+
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
