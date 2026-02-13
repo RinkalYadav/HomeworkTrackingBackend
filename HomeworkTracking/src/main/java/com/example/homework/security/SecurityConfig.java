@@ -1,5 +1,5 @@
 package com.example.homework.security;
-
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -13,34 +13,32 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http,
-                                                   JwtFilter jwtFilter) throws Exception {
+  @Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
 
-        http
-            .csrf(csrf -> csrf.disable())
-            .cors(cors -> {}) // enable default CORS
-            .authorizeHttpRequests(auth -> auth
+    http
+        .cors().and()
+        .csrf().disable()
+        .formLogin().disable()
+        .httpBasic().disable()
+        .sessionManagement(session -> 
+            session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        )
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+            .requestMatchers("/api/auth/**").permitAll()
+            .requestMatchers("/uploads/**").permitAll()
 
-                // ✅ Allow preflight requests
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+            .requestMatchers("/api/student/**").hasRole("STUDENT")
+            .requestMatchers("/api/teacher/**").hasRole("TEACHER")
+            .requestMatchers("/api/parent/**").hasRole("PARENT")
 
-                // ✅ Public endpoints
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/uploads/**").permitAll()
+            .anyRequest().authenticated()
+        )
+        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
-                // ✅ Role based access
-                .requestMatchers("/api/student/**").hasRole("STUDENT")
-                .requestMatchers("/api/teacher/**").hasRole("TEACHER")
-                .requestMatchers("/api/parent/**").hasRole("PARENT")
-
-                // ✅ Everything else requires authentication
-                .anyRequest().authenticated()
-            )
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
+    return http.build();
+}
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
