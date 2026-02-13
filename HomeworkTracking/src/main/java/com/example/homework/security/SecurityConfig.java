@@ -30,11 +30,11 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtFilter jwtF
             .requestMatchers("/uploads/**").permitAll()
             .requestMatchers("/api/teacher/assignments").permitAll()
 
-            .requestMatchers("/api/student/**").hasAuthority("STUDENT")
-            .requestMatchers(HttpMethod.PUT, "/api/teacher/submissions/**").hasAuthority("TEACHER")
-            .requestMatchers("/api/teacher/**").hasAuthority("TEACHER")
-            .requestMatchers("/api/parent/**").hasAuthority("PARENT")
-            .requestMatchers("/api/homework/**").hasAuthority("STUDENT")
+            .requestMatchers("/api/student/**").hasRole("STUDENT")
+.requestMatchers(HttpMethod.PUT, "/api/teacher/submissions/**").hasRole("TEACHER")
+.requestMatchers("/api/teacher/**").hasRole("TEACHER")
+.requestMatchers("/api/parent/**").hasRole("PARENT")
+.requestMatchers("/api/homework/**").hasRole("STUDENT")
 
             .anyRequest().authenticated()
         )
