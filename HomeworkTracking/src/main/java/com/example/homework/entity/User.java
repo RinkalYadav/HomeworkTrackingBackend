@@ -1,32 +1,29 @@
 package com.example.homework.entity;
 
-import jakarta.persistence.*;  // ✅ JPA annotations like @Entity, @Id, etc.
+import jakarta.persistence.*;
+
 @Entity
+@Table(name = "users")   // 🔥 Important: avoid PostgreSQL reserved word "user"
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true)
     private String username;
+
+    @Column(nullable = false)
     private String password;
-    private String role; // STUDENT, TEACHER, PARENT
+
+    private String role;  
     private String email;
     private String resetToken;
 
- 
     @Column(length = 500)
-    private String classes; // 👈 NEW FIELD: comma-separated (Class 6,Class 7)
+    private String classes;
 
-   
-
-	// Getters and Setters
-    public String getResetToken() {
-        return resetToken;
-    }
-
-    public void setResetToken(String resetToken) {
-        this.resetToken = resetToken;
-    }
+    // ===== Getters & Setters =====
 
     public Long getId() {
         return id;
@@ -68,6 +65,14 @@ public class User {
         this.email = email;
     }
 
+    public String getResetToken() {
+        return resetToken;
+    }
+
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
+    }
+
     public String getClasses() {
         return classes;
     }
@@ -75,5 +80,4 @@ public class User {
     public void setClasses(String classes) {
         this.classes = classes;
     }
-    
 }
